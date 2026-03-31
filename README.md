@@ -1,80 +1,86 @@
-# ERC-20 Token — Solidity Smart Contract
+# ERC-20 Capped Token — Solidity Smart Contract (Pixel / PXL)
 
-![Solidity](https://img.shields.io/badge/Solidity-0.8.x-363636?logo=solidity) ![Ethereum](https://img.shields.io/badge/Ethereum-Testnet-3C3C3D?logo=ethereum) ![OpenZeppelin](https://img.shields.io/badge/OpenZeppelin-Standards-4E5EE4) ![License](https://img.shields.io/badge/License-MIT-green)
+![Solidity](https://img.shields.io/badge/Solidity-0.8.24-363636?logo=solidity) ![Ethereum](https://img.shields.io/badge/Ethereum-OpenZeppelin-3C3C3D?logo=ethereum) ![License](https://img.shields.io/badge/License-MIT-green)
 
 ## Overview
 
-A fully functional ERC-20 token deployed on the Ethereum network, implementing the complete token standard per OpenZeppelin specifications. The contract supports minting, token transfers, and the approval/allowance mechanism, and was deployed and tested using Remix IDE, MetaMask, and interacted with programmatically via web3.py.
+A capped ERC-20 token named **"Pixel" (PXL)** implemented in Solidity 0.8.24, deployed on Ethereum using Remix IDE and MetaMask. The contract extends OpenZeppelin's `ERC20Burnable` and `Ownable` standards, restricting minting to the contract owner with a hard supply cap enforced on-chain.
 
-## Key Features
+The contract is compact (25 lines), clean, and production-ready.
 
-- **ERC-20 Compliant** — Full implementation of the OpenZeppelin ERC-20 standard
-- **Minting** — Owner-controlled token minting functionality
-- **Transfer** — Standard `transfer()` and `transferFrom()` functions
-- **Approval & Allowance** — Delegated spending via `approve()` and `allowance()`
-- **Deployed on Testnet** — Tested and verified on Ethereum testnet via MetaMask
-- **web3.py Integration** — Programmatic contract interaction via Python
+---
 
-## Smart Contract Functions
-
-| Function | Description |
-|----------|-------------|
-| `mint(address, amount)` | Creates new tokens and assigns them to an address |
-| `transfer(to, amount)` | Transfers tokens to another address |
-| `approve(spender, amount)` | Approves a third party to spend tokens |
-| `transferFrom(from, to, amount)` | Executes a delegated transfer |
-| `allowance(owner, spender)` | Returns the remaining approved amount |
-| `balanceOf(address)` | Returns the token balance of an address |
-| `totalSupply()` | Returns the total token supply |
-
-## Technology Stack
-
-| Tool | Purpose |
-|------|---------|
-| Solidity 0.8.x | Smart contract language |
-| OpenZeppelin | Secure, audited contract standards |
-| Remix IDE | Browser-based Solidity development & deployment |
-| MetaMask | Ethereum wallet & testnet interaction |
-| web3.py | Python-based contract interaction |
-
-## Project Structure
+## Contract: `Mycoin.sol`
 
 ```
-├── ERC20Token.sol    # Main smart contract
-└── README.md
+Token Name:   Pixel
+Token Symbol: PXL
+Standard:     ERC-20 (ERC20Burnable + Ownable)
+Solidity:     ^0.8.24
 ```
 
-## Deployment
+### Inheritance
+- `ERC20Burnable` — extends standard ERC-20 with `burn()` and `burnFrom()` functions
+- - `Ownable` — restricts sensitive operations to the contract deployer
+ 
+  - ### Key Features
+ 
+  - | Feature | Description |
+  - |---------|-------------|
+  - | **Capped Supply** | `uint256 public immutable cap` — hard ceiling on total token supply |
+  - | **Owner-Only Minting** | `function mint(address to, uint256 amount) external onlyOwner` |
+  - | **Supply Cap Enforcement** | `require(totalSupply() + amount <= cap, "Cap exceeded")` |
+  - | **Burnable** | Token holders can burn their own tokens via `ERC20Burnable` |
+  - | **Initial Supply** | Set at deployment; must be ≤ cap |
+ 
+  - ### Constructor
+  - ```solidity
+    constructor(uint256 initialSupply, uint256 cap_)
+        ERC20("Pixel", "PXL") Ownable(msg.sender) {
+        require(initialSupply <= cap_, "Initial supply exceeds cap");
+        cap = cap_;
+        _mint(msg.sender, initialSupply);
+    }
+    ```
 
-The contract was deployed on the **Sepolia / Goerli Ethereum testnet** using Remix IDE and MetaMask. Post-deployment, interactions (minting, transfers, balance checks) were scripted using web3.py.
+    ---
 
-### Example web3.py Interaction
+    ## Deployment
 
-```python
-from web3 import Web3
+    The contract was deployed on the **Ethereum Sepolia/Goerli testnet** via Remix IDE with MetaMask.
 
-w3 = Web3(Web3.HTTPProvider("https://sepolia.infura.io/v3/YOUR_INFURA_KEY"))
-contract = w3.eth.contract(address=CONTRACT_ADDRESS, abi=ABI)
+    **Steps to deploy:**
+    1. Open `Mycoin.sol` in [Remix IDE](https://remix.ethereum.org)
+    2. 2. Install OpenZeppelin via npm: `@openzeppelin/contracts`
+       3. 3. Compile with Solidity 0.8.24
+          4. 4. Connect MetaMask to Sepolia testnet
+             5. 5. Deploy with `initialSupply` and `cap` constructor arguments
+               
+                6. ---
+               
+                7. ## Technologies Used
+               
+                8. | Tool | Purpose |
+                9. |------|---------|
+                10. | Solidity 0.8.24 | Smart contract language |
+                11. | OpenZeppelin | ERC20Burnable + Ownable base contracts |
+                12. | Remix IDE | Browser-based development & deployment |
+                13. | MetaMask | Ethereum wallet & testnet signing |
+               
+                14. ## Getting Started
+               
+                15. ```bash
+                    git clone https://github.com/srhimal149/ERC-20-Token-Solidity-.git
+                    ```
 
-# Check balance
-balance = contract.functions.balanceOf(WALLET_ADDRESS).call()
-print(f"Token Balance: {balance}")
-```
+                    Open `Mycoin.sol` in Remix IDE and follow the deployment steps above.
 
-## Getting Started
+                    ## Author
 
-1. Open `ERC20Token.sol` in [Remix IDE](https://remix.ethereum.org)
-2. Compile using Solidity 0.8.x
-3. Connect MetaMask to Sepolia testnet
-4. Deploy via Remix's "Deploy & Run" tab
-5. Interact using Remix UI or web3.py scripts
+                    **Md Saifur Rahman Himal**
+                    MSc FinTech (Distinction Candidate) | Blockchain & Smart Contract Development
+                    [LinkedIn](https://www.linkedin.com/in/md-saifur-rahman-himal-70a0941ba) | [GitHub](https://github.com/srhimal149)
 
-## Author
+                    ## License
 
-**Md Saifur Rahman Himal**
-MSc FinTech (Distinction Candidate) | Blockchain & Smart Contract Development
-[LinkedIn](https://www.linkedin.com/in/md-saifur-rahman-himal-70a0941ba) | [GitHub](https://github.com/srhimal149)
-
-## License
-
-MIT License — feel free to use and adapt with attribution.
+                    MIT License
